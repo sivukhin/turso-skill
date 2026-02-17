@@ -18,7 +18,7 @@ If you need to inspect a synced database, make a copy of the file first and open
 
 ## Core Operations
 
-Every SDK exposes the same four sync operations:
+Every SDK exposes these sync operations:
 
 ### `pull()`
 
@@ -40,17 +40,24 @@ Uploads local changes to the remote.
 3. Remote applies changes atomically
 4. Local metadata updated
 
-### `sync()`
-
-Convenience method: push then pull in sequence. Available in some SDKs (React Native, WASM).
-
 ### `checkpoint()`
 
 Compacts the local WAL by transferring synced frames back to the main database file, then truncating the WAL. Also maintains a revert database that preserves pre-sync page state, enabling the sync engine to roll back local changes when pulling remote updates.
 
-## Conflict Resolution
+### `stats()`
 
-Turso uses a **last-push-wins** strategy. There is no automatic merging — the last client to successfully push overwrites conflicting changes on the remote. If a push fails due to a conflict, pull first to get the latest remote state, then push again.
+Returns current sync engine statistics:
+
+| Field | Description |
+|-------|-------------|
+| `cdc_operations` | Number of pending CDC operations (since last push) |
+| `main_wal_size` | Current main WAL file size in bytes |
+| `revert_wal_size` | Current revert WAL file size in bytes |
+| `network_sent_bytes` | Total bytes uploaded to remote |
+| `network_received_bytes` | Total bytes downloaded from remote |
+| `last_pull_unix_time` | Unix timestamp of last pull (null if never pulled) |
+| `last_push_unix_time` | Unix timestamp of last push (null if never pushed) |
+| `revision` | Current synced revision (opaque token, null if not yet synced) |
 
 ## Bootstrap
 
@@ -71,28 +78,6 @@ Partial sync is experimental and available in JavaScript, WASM, React Native, Py
 | `segmentSize` | Load pages in batches of this many bytes. E.g., with `segmentSize=131072` (128KB), accessing page 1 loads pages 1–32 together |
 | `prefetch` | When `true`, the sync engine proactively fetches pages that are likely to be accessed soon based on access patterns |
 
-## Stats
-
-All SDKs expose sync statistics:
-
-| Stat | Description |
-|------|-------------|
-| `network_received_bytes` | Total bytes downloaded from remote |
-| `network_sent_bytes` | Total bytes uploaded to remote |
-| `main_wal_size` | Current local WAL size |
-
-## Metadata Persistence
-
-Sync state is stored in a `{db_path}-info` JSON file alongside the database, containing:
-
-- Client unique ID
-- Current synced revision (opaque token)
-- Last pull/push timestamps
-- Last pushed change ID
-- Saved remote URL configuration
-
-This file enables resuming sync after application restarts without re-bootstrapping.
-
 ## SDK Availability
 
 | SDK | Sync Support | Sync Package/Feature |
@@ -103,14 +88,12 @@ This file enables resuming sync after application restarts without re-bootstrapp
 | WASM | Yes | `@tursodatabase/sync-wasm` (separate package) |
 | React Native | Yes | Built into `@tursodatabase/sync-react-native` |
 | JavaScript (Node.js) | Yes | `@tursodatabase/sync` (separate package) |
-| Java | No | Not yet available |
 
 ## Important Notes
 
 - **NEVER open a synced database outside the sync SDK** — CLI, SQLite, or non-sync SDKs will corrupt sync state
 - Sync is **explicit** — call push/pull manually; there is no automatic background sync
 - Local reads never block on network — they always read from the local replica
-- Push can fail with "checkpoint needed" — call `checkpoint()` then retry
 - Pull is idempotent — safe to call multiple times
 - Both push and pull are atomic — partial failures don't corrupt the database
 - Remote encryption is supported via cipher + key configuration (see SDK-specific docs)
