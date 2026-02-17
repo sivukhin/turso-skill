@@ -28,18 +28,21 @@ By default, changes go to `turso_cdc`. Specify a custom table name:
 PRAGMA unstable_capture_data_changes_conn('full,my_audit_log');
 ```
 
-## CDC Table Schema
+## CDC Table Schema (v2)
 
 | Column | Type | Description |
 |--------|------|-------------|
 | `change_id` | INTEGER | Monotonically increasing unique ID (primary key) |
 | `change_time` | INTEGER | Unix timestamp (seconds) — not guaranteed to be strictly increasing |
-| `change_type` | INTEGER | `1` = INSERT, `0` = UPDATE, `-1` = DELETE |
+| `change_type` | INTEGER | `1` = INSERT, `0` = UPDATE, `-1` = DELETE, `2` = COMMIT |
 | `table_name` | TEXT | Affected table name (`"sqlite_schema"` for DDL) |
 | `id` | INTEGER | Rowid of affected row |
 | `before` | BLOB | Row state before change (NULL for INSERT) |
 | `after` | BLOB | Row state after change (NULL for DELETE) |
 | `updates` | BLOB | Granular column modifications (for UPDATE) |
+| `change_txn_id` | INTEGER | Transaction ID — groups CDC rows belonging to the same transaction |
+
+COMMIT records (`change_type = 2`) mark transaction boundaries. In autocommit mode, one COMMIT record is emitted per statement. In explicit transactions (`BEGIN...COMMIT`), a single COMMIT record is emitted at the end.
 
 ## Complete Example
 

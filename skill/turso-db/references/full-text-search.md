@@ -2,6 +2,8 @@
 
 Turso provides FTS powered by the [Tantivy](https://github.com/quickwit-oss/tantivy) search engine. Requires the `fts` feature at compile time.
 
+**Status:** Experimental — requires `--experimental-index-methods` flag when starting `tursodb`.
+
 ## Creating an FTS Index
 
 ```sql

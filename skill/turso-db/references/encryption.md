@@ -12,7 +12,7 @@ Generate a secure 32-byte hex key:
 
 ```bash
 openssl rand -hex 32
-# Example: 2d7a30108d3eb3e45c90a732041fe54778bdcf707c76749fab7da335d1b39c1d
+# produces a 64-character hex string
 ```
 
 ### 2. Create an Encrypted Database
@@ -25,7 +25,7 @@ Then set the cipher and key:
 
 ```sql
 PRAGMA cipher = 'aegis256';
-PRAGMA hexkey = '2d7a30108d3eb3e45c90a732041fe54778bdcf707c76749fab7da335d1b39c1d';
+PRAGMA hexkey = '<your-64-char-hex-key>';
 ```
 
 ### 3. Reopen an Encrypted Database
@@ -34,7 +34,7 @@ PRAGMA hexkey = '2d7a30108d3eb3e45c90a732041fe54778bdcf707c76749fab7da335d1b39c1
 
 ```bash
 tursodb --experimental-encryption \
-  "file:database.db?cipher=aegis256&hexkey=2d7a30108d3eb3e45c90a732041fe54778bdcf707c76749fab7da335d1b39c1d"
+  "file:database.db?cipher=aegis256&hexkey=<your-64-char-hex-key>"
 ```
 
 ## URI Format
@@ -73,7 +73,7 @@ Parameters:
 ```sql
 -- At database creation
 PRAGMA cipher = 'aegis256';
-PRAGMA hexkey = '2d7a30108d3eb3e45c90a732041fe54778bdcf707c76749fab7da335d1b39c1d';
+PRAGMA hexkey = '<your-64-char-hex-key>';
 
 -- Now use the database normally
 CREATE TABLE secrets (id INTEGER PRIMARY KEY, data TEXT);
