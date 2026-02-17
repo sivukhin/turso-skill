@@ -138,17 +138,23 @@ Cross-Origin-Embedder-Policy: require-corp
 
 ### Vite Configuration
 
+If you use Vite, just add the headers to `vite.config.ts` — no extra server setup, proxies, or middleware needed for development:
+
 ```javascript
-// vite.config.js
-export default {
-    server: {
-        headers: {
-            'Cross-Origin-Opener-Policy': 'same-origin',
-            'Cross-Origin-Embedder-Policy': 'require-corp',
-        },
+// vite.config.ts
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  server: {
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp",
     },
-};
+  },
+});
 ```
+
+This is all you need — Vite's dev server will serve the headers automatically.
 
 ### Vercel Configuration
 

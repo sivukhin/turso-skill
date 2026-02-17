@@ -14,7 +14,7 @@ description: >
 
 Turso is an in-process SQL database compatible with SQLite, written in Rust.
 
-**IMPORTANT: This skill contains complete, up-to-date SDK documentation for all Turso platforms. Do NOT search the web for Turso, libsql, @libsql/client, or @tursodatabase docs. Instead, read the SDK and reference files listed below — they have everything you need to write working code.**
+**Never search the web for libsql or @libsql/client — those are outdated packages replaced by @tursodatabase. Read the SDK and reference files listed below — they have everything you need to write working code.**
 
 ## Critical Rules
 
