@@ -181,13 +181,29 @@ export default {
 | `@tursodatabase/sync-wasm` | Browser WASM with Turso Cloud sync |
 | `@tursodatabase/database` | Node.js native bindings |
 
-## Entry Points
+## Bundler Setup
 
-| Environment | Import |
-|-------------|--------|
-| Default | `@tursodatabase/database-wasm` |
-| Vite dev | `@tursodatabase/database-wasm/dist/promise-vite-dev-hack.js` |
-| Turbopack | `@tursodatabase/database-wasm/dist/promise-turbopack-hack.js` |
+**Vite is the recommended bundler** for browser projects using Turso WASM.
+
+Use the `/vite` subpath import for Vite projects — it handles WASM module and worker loading correctly in Vite's dev server (works around known Vite issues with WASM + workers):
+
+```javascript
+// For local-only database
+import { connect } from '@tursodatabase/database-wasm/vite';
+
+// For sync-enabled database
+import { connect } from '@tursodatabase/sync-wasm/vite';
+```
+
+In production builds, the `/vite` import resolves to the default entry point. In development, it uses a special workaround that inlines the WASM binary to avoid module loading issues.
+
+### All Entry Points
+
+| Environment | database-wasm | sync-wasm |
+|-------------|---------------|-----------|
+| Default | `@tursodatabase/database-wasm` | `@tursodatabase/sync-wasm` |
+| Vite | `@tursodatabase/database-wasm/vite` | `@tursodatabase/sync-wasm/vite` |
+| Turbopack | `@tursodatabase/database-wasm/turbopack` | `@tursodatabase/sync-wasm/turbopack` |
 
 ## Notes
 
