@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_URL="https://github.com/nickovs/turso-skill.git"
+REPO_URL="https://github.com/sivukhin/turso-skill.git"
 SKILL_NAME="turso-db"
 
 usage() {
@@ -18,8 +18,8 @@ Options:
 Supported agents: Claude Code, Cursor, Windsurf, Cline, OpenCode
 
 Examples:
-  curl -fsSL https://raw.githubusercontent.com/nickovs/turso-skill/main/install.sh | bash
-  curl -fsSL https://raw.githubusercontent.com/nickovs/turso-skill/main/install.sh | bash -s -- --local
+  curl -fsSL https://raw.githubusercontent.com/sivukhin/turso-skill/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/sivukhin/turso-skill/main/install.sh | bash -s -- --local
 EOF
 }
 
