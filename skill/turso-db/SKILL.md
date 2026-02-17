@@ -2,8 +2,10 @@
 name: turso-db
 description: >
   Turso (Limbo) database helper — an in-process SQLite-compatible database written in Rust.
+  Formerly known as libSQL / libsql. Replaces @libsql/client, libsql-experimental for Turso use cases.
   Features: vector search, full-text search, CDC, MVCC, encryption, remote sync.
-  SDKs: JavaScript, WASM, React Native, Rust, Python, Go.
+  SDKs: JavaScript (@tursodatabase/database), WASM (@tursodatabase/database-wasm),
+  React Native (@tursodatabase/sync-react-native), Rust (turso), Python (pyturso), Go (tursogo).
 ---
 
 # Turso Database
