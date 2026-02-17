@@ -1,18 +1,9 @@
 ---
 name: turso-db
 description: >
-  Turso database helper — an in-process SQLite-compatible database written in Rust.
-  Covers vector search (vector32, vector64, cosine/L2/Jaccard distance),
-  full-text search (FTS with Tantivy, BM25 scoring, fts_match, fts_score, fts_highlight),
-  Change Data Capture (CDC), MVCC concurrent transactions, page-level encryption (AES-GCM, AEGIS),
-  remote sync (push/pull replication, offline-first, WAL frame streaming).
-  SDKs: JavaScript (@tursodatabase/database, @tursodatabase/sync),
-  WASM (@tursodatabase/database-wasm, @tursodatabase/sync-wasm),
-  React Native (@tursodatabase/sync-react-native), Rust (turso crate),
-  Python (pyturso, DB-API 2.0), Go (tursogo, database/sql driver), Java (JDBC4 driver).
-  Also known as Limbo database. Package names: @tursodatabase/database,
-  @tursodatabase/database-wasm, @tursodatabase/sync, @tursodatabase/sync-wasm,
-  @tursodatabase/sync-react-native, turso, pyturso, tursogo.
+  Turso (Limbo) database helper — an in-process SQLite-compatible database written in Rust.
+  Features: vector search, full-text search, CDC, MVCC, encryption, remote sync.
+  SDKs: JavaScript, WASM, React Native, Rust, Python, Go.
 ---
 
 # Turso Database
@@ -25,19 +16,14 @@ Before writing any Turso code, you MUST know these constraints:
 
 - **BETA software** — not all SQLite features are implemented yet
 - **No multi-process access** — only one process can open a database file at a time
-- **No multi-threading** — one thread per connection; use separate connections for concurrency
-- **No savepoints** — only flat transactions (BEGIN/COMMIT/ROLLBACK)
-- **No triggers** — triggers are not supported
-- **No views** — views are not supported (unless `--experimental-views` flag is used)
+- **No WITHOUT ROWID tables** — all tables must have a rowid
 - **No vacuum** — VACUUM is not supported
 - **UTF-8 only** — the only supported character encoding
 - **WAL is the default journal mode** — legacy SQLite modes (delete, truncate, persist) are not supported
 - **FTS requires compile-time `fts` feature** — not available in all builds
-- **FTS has no read-your-writes in transactions** — changes are visible only after COMMIT
 - **Encryption requires `--experimental-encryption` flag** — not enabled by default
 - **MVCC is experimental and not production ready** — `PRAGMA journal_mode = experimental_mvcc`
 - **Vector distance: lower = closer** — ORDER BY distance ASC for nearest neighbors
-- **Query result ordering** is not guaranteed to match SQLite ordering
 
 ## Feature Decision Tree
 
@@ -81,9 +67,6 @@ Use this to decide which reference file to load:
 **Go?**
 → Read `sdks/go.md`
 
-**Java?**
-→ Read `sdks/java.md`
-
 ## SDK Install Quick Reference
 
 | Language | Package | Install Command |
@@ -96,7 +79,6 @@ Use this to decide which reference file to load:
 | Rust | `turso` | `cargo add turso` |
 | Python | `pyturso` | `pip install pyturso` |
 | Go | `tursogo` | `go get turso.tech/database/tursogo` |
-| Java | `tech.turso:turso` | Local build (see `sdks/java.md`) |
 
 ## CLI Quick Reference
 
@@ -172,4 +154,3 @@ This starts a server that exposes the database via the MCP protocol, allowing AI
 | `sdks/rust.md` | turso crate: Builder, async execute/query, sync feature |
 | `sdks/python.md` | pyturso: DB-API 2.0, turso.aio async, turso.sync remote |
 | `sdks/go.md` | tursogo: database/sql driver, no CGO, sync driver |
-| `sdks/java.md` | JDBC4 driver: TursoDB, TursoConnection, platform-specific builds |

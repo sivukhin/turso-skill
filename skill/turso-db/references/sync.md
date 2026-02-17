@@ -16,23 +16,6 @@ Turso supports bidirectional sync between a local embedded database and a remote
 
 If you need to inspect a synced database, make a copy of the file first and open the copy.
 
-## How It Works
-
-Turso sync operates on two layers:
-
-### Physical Layer: WAL Frame Streaming
-
-The local database uses WAL (Write-Ahead Logging) mode. Sync transfers WAL **frames** (page-sized chunks) between local and remote:
-
-- **Pull**: Downloads new frames from remote, applies them to the local WAL
-- **Push**: Uploads local WAL frames to remote
-
-Each frame is a 24-byte header + 4096-byte page. Frames are transferred via protobuf over HTTP. Zstd compression is supported.
-
-### Logical Layer: Change Data Capture
-
-For push operations, Turso uses an internal CDC table to track logical changes (INSERT/UPDATE/DELETE). These changes are replayed as SQL on the remote, ensuring correct application-level semantics.
-
 ## Core Operations
 
 Every SDK exposes the same four sync operations:
@@ -63,25 +46,11 @@ Convenience method: push then pull in sequence. Available in some SDKs (React Na
 
 ### `checkpoint()`
 
-Compacts the local WAL by writing WAL contents back to the main database file. Reduces local disk usage. The remote may request a checkpoint before accepting a push if the local WAL is too large (~1000 pages threshold).
+Compacts the local WAL by transferring synced frames back to the main database file, then truncating the WAL. Also maintains a revert database that preserves pre-sync page state, enabling the sync engine to roll back local changes when pulling remote updates.
 
 ## Conflict Resolution
 
-Turso uses **last-writer-wins** at both the physical and logical level:
-
-- **Physical conflicts**: Detected when multiple clients push overlapping WAL frame ranges. The push fails with a conflict error — the client must pull first, then retry.
-- **Logical conflicts**: No automatic merging. The last push to the remote wins. Changes are ordered by change ID within each generation.
-
-### Typical Conflict Flow
-
-```
-Client A: push() → success
-Client B: push() → conflict error
-Client B: pull() → gets Client A's changes
-Client B: push() → success (local changes applied on top)
-```
-
-Applications should handle `SQLITE_BUSY` or conflict errors by pulling and retrying.
+Turso uses a **last-push-wins** strategy. There is no automatic merging — the last client to successfully push overwrites conflicting changes on the remote. If a push fails due to a conflict, pull first to get the latest remote state, then push again.
 
 ## Bootstrap
 
@@ -89,6 +58,8 @@ On first sync with an empty local database, a **bootstrap** downloads the full r
 
 - **Full bootstrap** (default): Downloads all pages — the local replica becomes a complete copy
 - **Partial bootstrap** (experimental): Downloads only a subset of data, reducing initial bandwidth. Remaining pages are fetched on demand.
+
+Set `bootstrapIfEmpty: false` to skip the automatic bootstrap on first pull. The database will be created locally but remain empty until you explicitly pull. This is useful when you want the database ready for sync but want to delay the initial download (e.g., waiting for user login or network conditions).
 
 ### Partial Sync Configuration
 

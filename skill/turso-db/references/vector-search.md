@@ -10,6 +10,8 @@ Store a value for every dimension:
 
 - **`vector32`** — 32-bit float, 4 bytes/dimension. Use for most ML embeddings (OpenAI, sentence transformers).
 - **`vector64`** — 64-bit float, 8 bytes/dimension. Use when higher precision is needed.
+- **`vector8`** — 8-bit integer, 1 byte/dimension. Use for quantized embeddings where memory/storage is critical.
+- **`vector1bit`** — 1-bit binary, 1 bit/dimension. Use for binary quantization (e.g., Matryoshka embeddings).
 
 ### Sparse Vectors
 
