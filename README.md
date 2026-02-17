@@ -19,7 +19,7 @@ An installable skill that helps AI coding agents work with Turso, an in-process 
 Works with Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, Goose, OpenCode, Windsurf, and more:
 
 ```bash
-npx skills add nickovs/turso-skill
+npx skills add sivukhin/turso-skill
 ```
 
 ### Shell installer (fallback)
@@ -27,13 +27,13 @@ npx skills add nickovs/turso-skill
 Global install (all projects):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nickovs/turso-skill/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sivukhin/turso-skill/main/install.sh | bash
 ```
 
 Local install (current project only):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nickovs/turso-skill/main/install.sh | bash -s -- --local
+curl -fsSL https://raw.githubusercontent.com/sivukhin/turso-skill/main/install.sh | bash -s -- --local
 ```
 
 The shell installer copies the skill to Claude Code, Cursor, Windsurf, Cline, and OpenCode.
