@@ -1,5 +1,7 @@
 # turso-db skill
 
+**Archived**: use official [tursodatabase/agent-skills](https://github.com/tursodatabase/agent-skills) instead
+
 An agent skill that helps AI coding agents work with Turso, an in-process SQLite-compatible database written in Rust.
 
 ## What's Included
